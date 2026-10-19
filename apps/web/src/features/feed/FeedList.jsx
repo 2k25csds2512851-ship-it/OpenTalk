@@ -42,6 +42,12 @@ export const FeedList = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState(INITIAL_POSTS);
   const [filter, setFilter] = useState('');
+  const [topic, setTopic] = useState('');
+  const [debouncedFilter, setDebouncedFilter] = useState('');
+  React.useEffect(() => {
+    const t = setTimeout(() => setDebouncedFilter(filter), 300);
+    return () => clearTimeout(t);
+  }, [filter]);
   const TITLE_MAX = 120;
   const CONTENT_MAX = 2000;
   const overLimit = newTitle.length > TITLE_MAX || newContent.length > CONTENT_MAX;
@@ -178,6 +184,23 @@ export const FeedList = () => {
 
       {/* Post feed list */}
       <div className="space-y-4">
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by topic">
+          {[{ id: '', label: 'All' }, { id: 'tech', label: 'Tech' }, { id: 'campus', label: 'Campus' }, { id: 'open-source', label: 'Open Source' }, { id: 'design', label: 'Design' }, { id: 'career', label: 'Career' }].map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTopic(t.id)}
+              aria-pressed={topic === t.id}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                topic === t.id
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
         <input
           type="search"
           value={filter}
@@ -187,16 +210,15 @@ export const FeedList = () => {
           className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none"
         />
         {(() => {
-          const q = filter.trim().toLowerCase();
-          const visible = q
-            ? posts.filter(
-                (p) =>
-                  (p.title || '').toLowerCase().includes(q) ||
-                  (p.content || '').toLowerCase().includes(q) ||
-                  (p.topic || '').toLowerCase().includes(q) ||
-                  (p.tags || []).some((t) => String(t).toLowerCase().includes(q)),
-              )
-            : posts;
+          const q = debouncedFilter.trim().toLowerCase();
+          const visible = posts.filter((p) => {
+            if (topic && p.topic !== topic) return false;
+            if (!q) return true;
+            return (
+              (p.title || '').toLowerCase().includes(q) ||
+              (p.tags || []).some((t) => String(t).toLowerCase().includes(q))
+            );
+          });
           if (visible.length === 0) {
             return (
               <EmptyState
