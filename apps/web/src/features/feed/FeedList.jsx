@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { PostCard } from './PostCard';
 import { DebateModal } from '../debate/DebateModal';
-import { PlusCircle, Sparkles } from 'lucide-react';
+import { PlusCircle, SearchX, Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { EmptyState } from '../../components/EmptyState';
 
 const INITIAL_POSTS = [
   {
@@ -40,6 +41,7 @@ const INITIAL_POSTS = [
 export const FeedList = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState(INITIAL_POSTS);
+  const [filter, setFilter] = useState('');
   const [newTitle, setNewTitle] = useState('');
   const [newContent, setNewContent] = useState('');
   const [newTopic, setNewTopic] = useState('tech');
@@ -158,14 +160,45 @@ export const FeedList = () => {
 
       {/* Post feed list */}
       <div className="space-y-4">
-        {posts.map((post) => (
+        <input
+          type="search"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          placeholder="Filter stances..."
+          aria-label="Filter stances"
+          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none"
+        />
+        {(() => {
+          const q = filter.trim().toLowerCase();
+          const visible = q
+            ? posts.filter(
+                (p) =>
+                  (p.title || '').toLowerCase().includes(q) ||
+                  (p.content || '').toLowerCase().includes(q) ||
+                  (p.topic || '').toLowerCase().includes(q) ||
+                  (p.tags || []).some((t) => String(t).toLowerCase().includes(q)),
+              )
+            : posts;
+          if (visible.length === 0) {
+            return (
+              <EmptyState
+                icon={SearchX}
+                title="No stances match"
+                description="Try different filters, or clear them to see the full feed."
+                actionLabel="Clear Filters"
+                onAction={() => setFilter('')}
+              />
+            );
+          }
+          return visible.map((post) => (
           <PostCard
             key={post.id}
             post={post}
             onVote={handleVote}
             onOpenDebate={(p) => setActiveDebatePost(p)}
           />
-        ))}
+          ));
+        })()}
       </div>
 
       {/* Threaded Debate Modal */}
