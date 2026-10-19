@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../features/feed/models/post_model.dart';
 
 class StanceCard extends StatefulWidget {
@@ -157,6 +158,26 @@ class _StanceCardState extends State<StanceCard> {
                 Text(
                   '${post.downvotes}',
                   style: const TextStyle(color: Colors.grey, fontSize: 13),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: const Icon(Icons.share_outlined, size: 18, color: Colors.grey),
+                  tooltip: 'Share',
+                  onPressed: () async {
+                    final link = 'https://opentalk.app/post/${post.id}';
+                    await Clipboard.setData(ClipboardData(text: link));
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Link copied to clipboard!'),
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: const Color(0xFF1F2937),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 const Spacer(),
                 InkWell(
