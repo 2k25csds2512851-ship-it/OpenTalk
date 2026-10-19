@@ -42,6 +42,15 @@ export const FeedList = () => {
   const { user } = useAuth();
   const [posts, setPosts] = useState(INITIAL_POSTS);
   const [filter, setFilter] = useState('');
+  const TITLE_MAX = 120;
+  const CONTENT_MAX = 2000;
+  const overLimit = newTitle.length > TITLE_MAX || newContent.length > CONTENT_MAX;
+  const counterClass = (len, max) => {
+    const ratio = max ? len / max : 0;
+    if (len > max || ratio >= 1) return 'text-red-400';
+    if (ratio >= 0.8) return 'text-amber-400';
+    return 'text-slate-500';
+  };
   const [newTitle, setNewTitle] = useState('');
   const [newContent, setNewContent] = useState('');
   const [newTopic, setNewTopic] = useState('tech');
@@ -116,17 +125,25 @@ export const FeedList = () => {
               placeholder="What is your stance title?"
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
+              maxLength={TITLE_MAX + 50}
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
               required
             />
+            <p className={`text-right text-xs ${counterClass(newTitle.length, TITLE_MAX)}`} aria-live="polite">
+              {newTitle.length}/{TITLE_MAX}
+            </p>
             <textarea
               placeholder="Elaborate on your stance, arguments, and points..."
               value={newContent}
               onChange={(e) => setNewContent(e.target.value)}
               rows={3}
+              maxLength={CONTENT_MAX + 100}
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
               required
             />
+            <p className={`text-right text-xs ${counterClass(newContent.length, CONTENT_MAX)}`} aria-live="polite">
+              {newContent.length}/{CONTENT_MAX}
+            </p>
             <div className="flex items-center justify-between pt-2">
               <select
                 value={newTopic}
@@ -148,7 +165,8 @@ export const FeedList = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold"
+                  disabled={overLimit}
+                  className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Publish Stance
                 </button>
