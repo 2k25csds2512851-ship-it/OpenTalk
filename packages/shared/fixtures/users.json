@@ -1,0 +1,20 @@
+[
+  {
+    "uid": "user-1",
+    "displayName": "Sarah Jenkins",
+    "username": "sarah_j",
+    "email": "sarah.jenkins@example.com",
+    "avatarUrl": "https://example.com/avatars/sarah.png",
+    "bio": "Fullstack eng who ships monorepos for fun.",
+    "reputationScore": 420,
+    "joinedAt": "2025-11-02T10:15:00.000Z"
+  },
+  {
+    "uid": "user-2",
+    "displayName": "Priya Sharma",
+    "username": "priya_sharma",
+    "email": "priya.sharma@example.com",
+    "reputationScore": 188,
+    "joinedAt": "2026-01-18T08:00:00.000Z"
+  }
+]

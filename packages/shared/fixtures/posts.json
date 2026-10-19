@@ -1,0 +1,48 @@
+[
+  {
+    "id": "post-1",
+    "authorId": "user-1",
+    "authorName": "Sarah Jenkins",
+    "authorAvatar": "https://example.com/avatars/sarah.png",
+    "title": "Monorepos with Turborepo + npm are superior for GDG Fullstack Teams",
+    "content": "Managing Flutter mobile apps alongside React web clients and Firebase Cloud Functions in a unified repository drastically reduces integration overhead and makes schema sharing effortless.",
+    "topic": "tech",
+    "tags": ["monorepo", "flutter", "react", "architecture"],
+    "upvotes": 42,
+    "downvotes": 3,
+    "replyCount": 18,
+    "moderationStatus": "approved",
+    "createdAt": "2026-09-12T09:30:00.000Z",
+    "updatedAt": "2026-09-12T11:00:00.000Z"
+  },
+  {
+    "id": "post-2",
+    "authorId": "user-2",
+    "authorName": "Priya Sharma",
+    "title": "Why GDGOC Sprints should focus on Real-World Open Source tooling",
+    "content": "Contributing to live projects during sprints gives students direct experience with CI/CD, branch naming, pull request reviews, and scalable backend security rules.",
+    "topic": "open-source",
+    "tags": ["gdgoc", "opensource", "sprint2026"],
+    "upvotes": 27,
+    "downvotes": 1,
+    "replyCount": 9,
+    "moderationStatus": "approved",
+    "createdAt": "2026-09-20T14:05:00.000Z",
+    "updatedAt": "2026-09-20T15:40:00.000Z"
+  },
+  {
+    "id": "post-3",
+    "authorId": "user-1",
+    "authorName": "Sarah Jenkins",
+    "title": "Campus hub UX: keep debate threads shallow on mobile",
+    "content": "Deep nesting hides the original stance on small screens. Prefer two levels of replies and surface the parent claim above the fold.",
+    "topic": "campus",
+    "tags": ["ux", "mobile", "debate"],
+    "upvotes": 11,
+    "downvotes": 0,
+    "replyCount": 4,
+    "moderationStatus": "pending",
+    "createdAt": "2026-10-01T18:22:00.000Z",
+    "updatedAt": "2026-10-01T18:22:00.000Z"
+  }
+]
