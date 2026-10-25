@@ -1,13 +1,79 @@
-﻿rules_version = '2';
+
+rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // User Profiles
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if false;
+    }
+
+    // OpenTalk Posts
     match /posts/{postId} {
-      allow read, write: if true;
-      
+      allow read: if true;
+
+      allow create: if isAuthenticated()
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 5
+        && request.resource.data.title.size() <= 150
+        && request.resource.data.content is string
+        && request.resource.data.content.size() >= 10
+        && request.resource.data.content.size() <= 2000;
+
+      allow update: if isOwner(resource.data.authorId)
+        || (isAuthenticated()
+          && request.resource.data.diff(resource.data)
+            .affectedKeys()
+            .hasOnly(['upvotes', 'downvotes', 'replyCount']));
+
+      allow delete: if isOwner(resource.data.authorId);
+
+      // Individual user votes
       match /votes/{userId} {
-        allow read: if true;
-        allow write: if request.auth != null && request.auth.uid == userId;
+        allow read: if isOwner(userId);
+
+        allow create, update: if isOwner(userId)
+          && request.resource.data.vote in ['up', 'down'];
+
+        allow delete: if isOwner(userId);
       }
+
+      // Threaded debate replies
+      match /replies/{replyId} {
+        allow read: if true;
+
+        allow create: if isAuthenticated()
+          && request.resource.data.authorId == request.auth.uid
+          && request.resource.data.content is string
+          && request.resource.data.content.size() >= 1
+          && request.resource.data.content.size() <= 1000;
+
+        allow update: if isOwner(resource.data.authorId)
+          || (isAuthenticated()
+            && request.resource.data.diff(resource.data)
+              .affectedKeys()
+              .hasOnly(['upvotes', 'downvotes']));
+
+        allow delete: if isOwner(resource.data.authorId);
+      }
+    }
+
+    // Trending topics: clients can read, not write
+    match /trending/{topicId} {
+      allow read: if true;
+      allow write: if false;
     }
   }
 }
